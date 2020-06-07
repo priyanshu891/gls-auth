@@ -34,14 +34,13 @@ export class AuthService {
     async login(user) {
         const payload = { user, sub: user.id };
         return {
-            userId: user.id,
+            Id: user.id,
             accessToken: this.jwtService.sign(payload)
         };
     }
 
     validateToken(jwt: string) {
-        const jw = this.jwtService.verify(jwt);
-        console.log("From JW", jw);
-        return jw;
+        const payload = this.jwtService.verify(jwt);
+        return payload;
     }
 }

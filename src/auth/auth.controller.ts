@@ -17,20 +17,9 @@ export class AuthController {
     async loggedIn(data) {
         try {
             const res = this.authService.validateToken(data.jwt);
-            console.log("Hiii", res);
             return res;
         } catch (e) {
-            const errObj: Error = {
-                name: "",
-                message: "",
-            }
-
-            if (e instanceof Error) {
-                errObj.name = e.name;
-                errObj.message = e.message
-                console.log(errObj)
-            }
-            return new Error(errObj.message);
+            return e;
         }
     }
 }
