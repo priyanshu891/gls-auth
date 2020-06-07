@@ -40,6 +40,8 @@ export class AuthService {
     }
 
     validateToken(jwt: string) {
-        return this.jwtService.verify(jwt);
+        const jw = this.jwtService.verify(jwt);
+        console.log("From JW", jw);
+        return jw;
     }
 }
