@@ -9,32 +9,57 @@ import { JwtService } from '@nestjs/jwt';
 export class AuthService {
     constructor(@Inject('USER_CLIENT') private readonly client: ClientProxy, private readonly jwtService: JwtService) { }
 
-    async validateUser(username: string, password: string): Promise<any> {
+    // async validateUser(email: string, password: string): Promise<any> {
+    //     try {
+    //         const user = await this.client.send({ role: 'user', cmd: 'get' }, { email }).pipe(timeout(5000), catchError(err => {
+    //             if (err instanceof TimeoutError) {
+    //                 return throwError(new RequestTimeoutException());
+    //             }
+    //             return throwError(err);
+    //         })).toPromise();
+
+    //         if (compareSync(password, user?.password)) {
+    //             console.log(user);
+    //             return user;
+    //         }
+    //         Logger.log("Got Request")
+    //         return null;
+    //     } catch (e) {
+    //         Logger.log(e);
+    //         throw e;
+    //     }
+
+    // }
+
+    async validateUser(email: string, password: string): Promise<any> {
         try {
-            const user = await this.client.send({ role: 'user', cmd: 'get' }, { username }).pipe(timeout(5000), catchError(err => {
+            const user = await this.client.send({ role: 'user', cmd: 'get' }, { email }).pipe(timeout(5000), catchError(err => {
                 if (err instanceof TimeoutError) {
                     return throwError(new RequestTimeoutException());
                 }
                 return throwError(err);
             })).toPromise();
 
-            if (compareSync(password, user?.password)) {
-                console.log(user);
-                return user;
+
+            if (user) {
+                if (compareSync(password, user?.password)) {
+                    console.log(user);
+                    return user;
+                }
             }
-            Logger.log("Got Request")
             return null;
         } catch (e) {
             Logger.log(e);
             throw e;
         }
-
     }
 
     async login(user) {
+        console.log(user);
+
         const payload = { user, sub: user.id };
         return {
-            Id: user.id,
+            Id: user._id,
             accessToken: this.jwtService.sign(payload)
         };
     }
