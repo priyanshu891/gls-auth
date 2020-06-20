@@ -9,28 +9,6 @@ import { JwtService } from '@nestjs/jwt';
 export class AuthService {
     constructor(@Inject('USER_CLIENT') private readonly client: ClientProxy, private readonly jwtService: JwtService) { }
 
-    // async validateUser(email: string, password: string): Promise<any> {
-    //     try {
-    //         const user = await this.client.send({ role: 'user', cmd: 'get' }, { email }).pipe(timeout(5000), catchError(err => {
-    //             if (err instanceof TimeoutError) {
-    //                 return throwError(new RequestTimeoutException());
-    //             }
-    //             return throwError(err);
-    //         })).toPromise();
-
-    //         if (compareSync(password, user?.password)) {
-    //             console.log(user);
-    //             return user;
-    //         }
-    //         Logger.log("Got Request")
-    //         return null;
-    //     } catch (e) {
-    //         Logger.log(e);
-    //         throw e;
-    //     }
-
-    // }
-
     async validateUser(email: string, password: string): Promise<any> {
         try {
             const user = await this.client.send({ role: 'user', cmd: 'get' }, { email }).pipe(timeout(5000), catchError(err => {
@@ -40,10 +18,8 @@ export class AuthService {
                 return throwError(err);
             })).toPromise();
 
-
             if (user) {
                 if (compareSync(password, user?.password)) {
-                    console.log(user);
                     return user;
                 }
             }
@@ -55,11 +31,16 @@ export class AuthService {
     }
 
     async login(user) {
-        console.log(user);
+        const payload = { id: user._id };
 
-        const payload = { user, sub: user.id };
+        const entity = {
+            role: user.role,
+            name: `${user.firstName} ${user.lastName}`,
+            email: user.email,
+            createdAt: user.createdAt
+        }
         return {
-            Id: user._id,
+            entity,
             accessToken: this.jwtService.sign(payload)
         };
     }
