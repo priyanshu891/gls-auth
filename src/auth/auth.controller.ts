@@ -24,4 +24,11 @@ export class AuthController {
     async login(@Request() req) {
         return this.authService.login(req.user);
     }
+
+    @MessagePattern({ role: 'auth', cmd: 'sign' })
+    async signin(@Request() req) {
+        console.log("Hellele");
+        return "Check"
+        // return this.authService.login(req.user);
+    }
 }
