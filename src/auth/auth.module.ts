@@ -10,10 +10,13 @@ import { jwtConstants } from '../Utils/constants';
 @Module({
     imports: [ClientsModule.register([{
         name: 'USER_CLIENT',
-        transport: Transport.TCP,
+        transport: Transport.RMQ,
         options: {
-            host: 'localhost',
-            port: 4010,
+            urls: ['amqp://localhost:5672'],
+            queue: 'user_queue',
+            queueOptions: {
+                durable: false
+            },
         }
     }]), JwtModule.register({
         secret: jwtConstants.secret,
